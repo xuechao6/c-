@@ -17,7 +17,7 @@
 2.不能直接打印字符串，需要增加.c_str()，例如
 
 ```c++
- printf（%s，str） ------ printf（%s，str.c_str()）
+printf（%s，str） ------ printf（%s，str.c_str()）
 ```
 
 
@@ -53,10 +53,11 @@ struct student *p = &s1
 
 ```c++
 void printinfo(int people[])或者(int *people)
-{}
-int main(){
-int people[3]={0,1,2};
-printinfo(people); #people并不是数组，而是第一个元素的地址，使用时只能将数组名作为参数}
+{
+    int main(){
+    int people[3]={0,1,2};
+    printinfo(people); //people并不是数组，而是第一个元素的地址，使用时只能将数组名作为参数
+}
 ```
 
 1.数组名就是首个元素的地址，上述printinfo实际上传的不是数组，而是首个元素的地址
