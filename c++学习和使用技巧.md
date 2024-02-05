@@ -1,5 +1,7 @@
 # c++学习和使用技巧
 
+谨以此文，记录我的22岁 ——2023年6月
+
 # 第一阶段
 
 
@@ -80,6 +82,14 @@ int* p = &a  //p的值为0x0011等，是一个具体的地址
 2.*p是解引用的操作，因为p是地址，解引用相当于直接获取该地址存储的值，就可以彻底改变该地址的数据，可以形参修饰实参
 
 3.指针常量（int* cost）：指针的指向是固定的（不可修改），指针指向的值可以修改
+
+**二级指针：**
+
+```c++
+worker** worker_array = new worker*[5] //创建了5个work*的指针数组
+//worker_array可以理解成：等号右边创建了一个指针数组，用worker_array来指向这个指针数组的初始地址
+//可以用索引的方式找到特定的一级指针，例如worker_array[1]->name，可以直接访问2号工作人员的名字
+```
 
 
 
@@ -692,32 +702,26 @@ void test01()
     }
 
     //第一种方式
-    //char buf[1024] = { 0 };
-    //while (ifs >> buf)
-    //{
-    //	cout << buf << endl;
-    //}
+    char buf[1024] = { 0 };
+    while (ifs >> buf)
+    {
+    	cout << buf << endl;
+    }
 
     //第二种
-    //char buf[1024] = { 0 };
-    //while (ifs.getline(buf,sizeof(buf)))
-    //{
-    //	cout << buf << endl;
-    //}
+    char buf[1024] = { 0 };
+    while (ifs.getline(buf,sizeof(buf)))
+    {
+    	cout << buf << endl;
+    }
 
     //第三种
-    //string buf;
-    //while (getline(ifs, buf))
-    //{
-    //	cout << buf << endl;
-    //}
-	
-    //第四种
-    //char c;
-    //while ((c = ifs.get()) != EOF)
-    //{
-    //    cout << c;
-    //}
+    string line;
+    //getline会逐行遍历文件，并将每一行都存储在line变量中，line表示循环中每一行的数据
+    while (getline(ifs, line)) //这里的getline第一个参数一定是输入流，不是文件名称，切记切结
+    {
+    	cout << line << endl;
+    }
 
 	ifs.close();
 ```
@@ -762,3 +766,70 @@ int main() {
 	return 0;
 }
 ```
+
+**3.判断文件中是否有数据：**读取文件后，文件流利用eof函数
+
+```c++
+char h
+ifs>>h;
+if(ifs.eof())
+{
+    cout<<"文件为空"<<endl;
+}
+```
+
+**4.读取每一行中的数据：**
+
+```c++
+while(ifs >>id && ifs >> name && ifs >> did)
+```
+
+1. 从输入流 `ifs` 中尝试提取一个整数，并将其赋值给变量 `id`。
+2. 如果提取成功，则继续尝试从输入流中提取一个字符串，并将其赋值给变量 `name`。
+3. 如果第二次提取也成功，则继续尝试从输入流中提取一个整数，并将其赋值给变量 `did`。
+4. 如果以上所有的提取操作都成功，表达式的结果为真（`true`），进入 `while` 循环体。否则，循环结束。
+
+
+
+## 21.new相关
+
+**定义：**new用来在堆区手动开辟一块内存，需要注意的是返回值是对应类型的指针
+
+​			需要delete手动释放开辟的内存空间
+
+**区分**：区分（）和[ ]两种方式
+
+```c++
+int* a = new int(5)  //表示新开辟了一个单独的int空间，初始化数据为5
+int* b = new int[5]  //表示新开辟了一个包含5个整形的数组，无初始化
+    //如果需要初始化，可以写成int* b = new int[5]{1,2,3,4,5}
+worker** c = new worker*[5]  
+    //c[0]代表在这个指针数组中第一个元素的指针，注意为一级指针，不是二级指针，可以用c[0]->name直接访问人员姓名
+```
+
+**释放**：指针数组释放需要加上[]，指针数组也可以单个释放
+
+```c++
+delete a;  //正常释放即可
+delete[] a;  //表示释放的是一个开辟的数据
+delete a[2]; //只释放a指针数组中的第3个成员的指针，也可以后面重新赋值
+```
+
+**new数组应用**：一般来说new数组是为了动态管理数组的大小，比vector稍微快一些
+
+```c++
+// 动态添加元素
+int *arr = new int[5];
+for (int i = 0; i < 5; ++i) {
+    arr[i] = i;
+}
+// 在运行时添加更多的元素
+int newSize = 10;
+int *newArr = new int[newSize];
+for (int i = 0; i < 5; ++i) {
+    newArr[i] = arr[i];
+}
+delete[] arr;  // 释放原数组的内存
+arr = newArr;  // 更新指针
+```
+
